@@ -44,6 +44,8 @@ namespace Util
 				return subsections[name];
 			}
 
+			bool hasParent() { return parent != nullptr; }
+
 			std::string name;
 			IniSection* parent = nullptr;
 			std::unordered_map<std::string, std::string> properties;
