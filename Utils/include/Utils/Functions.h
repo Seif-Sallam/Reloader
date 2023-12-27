@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <algorithm>
+#include <fstream>
 #include <imgui.h>
 
 namespace Util
@@ -30,4 +31,17 @@ namespace Util
 
 	bool IsInteger(const char *value);
 	uint32_t GetInteger(const char *imm, uint32_t size);
+
+	inline static std::string GetFileContent(const char* fileName) {
+		std::ifstream inputFile(fileName);
+		std::string content;
+		while(inputFile.eof() == false)
+		{
+			std::string line;
+			std::getline(inputFile, line);
+			content += line + '\n';
+		}
+		inputFile.close();
+		return content;
+	}
 }

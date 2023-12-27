@@ -4,7 +4,7 @@
 #include <fstream>
 #include <fmt/core.h>
 #include <algorithm>
-#include <unordered_map>
+#include <map>
 #include <cassert>
 
 
@@ -15,41 +15,48 @@ namespace Util
 	public:
 		struct IniSection
 		{
+		public:
 			IniSection(std::string name = "", IniSection* parent = nullptr)
-				: name(name), parent(parent) {}
+				: name(name), parentSection(parent) {}
 
-			IniSection& create(const char* name) {
-				this->name = name;
+			IniSection& property(const char* key, const char* value) {
+				assert(properties.find(key) == properties.end());
+				properties[key] = value;
 				return *this;
 			}
 
-			IniSection& addProperty(const char* key, const char* value) {
-				assert(properties.find(key) != properties.end());
-				properties.insert(key, value);
-				return *this;
-			}
+			IniSection& section(const char* name) {
+				assert(indicies.find(name) == indicies.end());
+				indicies[name] = subsections.size();
 
-			IniSection& addSubSection(const char* name) {
-				assert(subsections.find(name) != subsections.end());
-				subsections[name] = IniSection{name, this};
-				return subsections[name];
+				subsections.push_back(new IniSection{name, this});
+				return *subsections.back();
 			};
 
-			IniSection& getParent() {
-				return *parent;
+			IniSection& parent() {
+				return *parentSection;
 			}
 
-			IniSection& getSubSection(const char* name) {
-				assert(subsections.find(name) != subsections.end());
-				return subsections[name];
+			IniSection& getSection(const char* name) {
+				assert(indicies.find(name) == indicies.end());
+				return *subsections[indicies[name]];
 			}
 
-			bool hasParent() { return parent != nullptr; }
+			bool hasParent() { return parentSection != nullptr; }
 
+			~IniSection() {
+				for (auto& section : subsections)
+					delete section;
+			}
+
+		private:
 			std::string name;
-			IniSection* parent = nullptr;
-			std::unordered_map<std::string, std::string> properties;
-			std::unordered_map<std::string, IniSection> subsections;
+			IniSection* parentSection = nullptr;
+			std::map<std::string, std::string> properties;
+			std::map<std::string, int> indicies;
+			std::vector<IniSection*> subsections;
+
+		friend class IniFile;
 		};
 
 		// Map from one parent to the children (one parent can have more htan one child)
@@ -58,6 +65,10 @@ namespace Util
 
 		IniSection& createFile() { mGlobalSection.name = "Global"; return mGlobalSection; }
 		IniSection& result() { return mGlobalSection; }
+
+	private:
+		bool writeSection(std::ofstream& file, IniFile::IniSection& section);
+
 	private:
 		IniSection mGlobalSection;
 	};

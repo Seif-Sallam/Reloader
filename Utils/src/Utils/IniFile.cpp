@@ -7,9 +7,10 @@ namespace Util
 	bool IniFile::read(const char* file)
 	{
 		// read the damn file
+		return false;
 	}
 
-	inline static bool writeSection(std::ofstream& file, IniFile::IniSection& section)
+	bool IniFile::writeSection(std::ofstream& file, IniFile::IniSection& section)
 	{
 		std::vector<std::string> sectionTree;
 		IniFile::IniSection* currentSection = &section;
@@ -17,7 +18,9 @@ namespace Util
 		while(currentSection) {
 			if (currentSection->hasParent())
 			{
-				currentSection = section.parent;
+				currentSection = currentSection->parentSection;
+				if (currentSection->name == "Global")
+					continue;
 				sectionTree.push_back(currentSection->name);
 			}
 			else
@@ -26,8 +29,7 @@ namespace Util
 			}
 		}
 		std::string sectionName = "[" + sectionTree.back();
-		// Until 1 because 0 is always GlobalSection
-		for (size_t i = sectionTree.size() - 2; i >= 1; --i)
+		for (int i = sectionTree.size() - 2; i >= 0; --i)
 		{
 			sectionName += "." + sectionTree[i];
 		}
@@ -37,8 +39,8 @@ namespace Util
 		for (auto& [key, value] : section.properties)
 			file << key << " = " << value << '\n';
 
-		for (auto& [name, subsection] : section.subsections)
-			writeSection(file, subsection);
+		for (auto& subsection : section.subsections)
+			writeSection(file, *subsection);
 
 		return true;
 	}
@@ -46,8 +48,8 @@ namespace Util
 	bool IniFile::write(const char* file)
 	{
 		std::ofstream outFile(file);
-		for (auto& [name, section] : this->mGlobalSection.subsections)
-			writeSection(outFile, section);
+		for (auto& section : this->mGlobalSection.subsections)
+			writeSection(outFile, *section);
 		outFile.close();
 		return true;
 	};
