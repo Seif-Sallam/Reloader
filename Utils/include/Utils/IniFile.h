@@ -51,11 +51,11 @@ namespace Util
 		};
 
 		// Map from one parent to the children (one parent can have more htan one child)
-		std::vector<IniSection> read(const char* file);
-		bool write(const char* file, const std::vector<IniSection>& sections);
+		bool read(const char* file);
+		bool write(const char* file);
 
 		IniSection& createFile() { mGlobalSection.name = "Global"; return mGlobalSection; }
-
+		IniSection& result() { return mGlobalSection; }
 	private:
 		IniSection mGlobalSection;
 	};
