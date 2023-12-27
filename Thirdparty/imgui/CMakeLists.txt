@@ -11,17 +11,21 @@ add_library(
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	target_link_directories(imgui
-		PUBLIC
+	target_link_libraries(imgui
+		PRIVATE
 		GL
+	)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	target_link_libraries(imgui
+		PRIVATE
+		opengl32
 	)
 endif()
 
 target_link_libraries(imgui
 	PRIVATE
 	sfml-graphics
-    sfml-window
-    sfml-system
-    sfml-audio
-	opengl32
+	sfml-window
+	sfml-system
+	sfml-audio
 )
