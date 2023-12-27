@@ -53,4 +53,14 @@ namespace Util
 		outFile.close();
 		return true;
 	};
+
+	void IniFile::append(IniFile& other)
+	{
+		for (auto& section : other.mGlobalSection.subsections)
+		{
+			auto sec = this->mGlobalSection.section(section->name.c_str());
+			for (auto property : section->properties)
+				sec.property(property.first.c_str(), property.second.c_str());
+		}
+	}
 }

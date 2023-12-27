@@ -63,6 +63,8 @@ namespace Util
 		bool read(const char* file);
 		bool write(const char* file);
 
+		void append(IniFile& other);
+
 		IniSection& createFile() { mGlobalSection.name = "Global"; return mGlobalSection; }
 		IniSection& result() { return mGlobalSection; }
 
