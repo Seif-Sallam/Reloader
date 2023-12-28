@@ -7,7 +7,6 @@
 #include <map>
 #include <cassert>
 
-
 namespace Util
 {
 	class IniFile

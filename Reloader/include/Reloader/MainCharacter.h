@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "Entity.h"
 
 namespace Reloader
