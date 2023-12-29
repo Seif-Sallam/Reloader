@@ -40,6 +40,8 @@ namespace Util
 		{
 			std::string line;
 			std::getline(inputFile, line);
+			if (line == "")
+				break;
 			content += line + '\n';
 		}
 		inputFile.close();

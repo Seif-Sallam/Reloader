@@ -37,7 +37,7 @@ namespace Util
 			}
 
 			IniSection& getSection(const char* name) {
-				assert(indicies.find(name) == indicies.end());
+				assert(indicies.find(name) != indicies.end());
 				return *subsections[indicies[name]];
 			}
 
@@ -64,11 +64,13 @@ namespace Util
 
 		void append(IniFile& other);
 
+		std::string getFileContent();
+
 		IniSection& createFile() { mGlobalSection.name = "Global"; return mGlobalSection; }
 		IniSection& result() { return mGlobalSection; }
 
 	private:
-		bool writeSection(std::ofstream& file, IniFile::IniSection& section);
+		bool writeSection(std::ostream& file, IniFile::IniSection& section);
 
 	private:
 		IniSection mGlobalSection;
