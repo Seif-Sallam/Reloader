@@ -16,9 +16,6 @@ CPMAddPackage(
     GIT_TAG 		2.5.x
 )
 
-
-include_directories(AFTER ${tinyxml2_SOURCE_DIR})
-
 project(
 	Reloader
 	VERSION
